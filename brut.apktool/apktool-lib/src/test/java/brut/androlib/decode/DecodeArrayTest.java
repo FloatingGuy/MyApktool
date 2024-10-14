@@ -61,6 +61,19 @@ public class DecodeArrayTest extends BaseTest {
     }
 
     @Test
+    public void androguardBug() throws BrutException {
+        ExtFile apkFile = new ExtFile("/Users/facat/Downloads/静态线上apk-axml-bug", "65-6b8a740eb2269e890ed2bf2b590dcc06.apk");
+        ApkInfo apkInfo = new ApkInfo(apkFile);
+        ResourcesDecoder resourcesDecoder = new ResourcesDecoder(Config.getDefaultConfig(), apkInfo);
+
+        resourcesDecoder.loadMainPkg();
+        ResTable resTable = resourcesDecoder.getResTable();
+//        ResValue value = resTable.getResSpec(0x7f020001).getDefaultResource().getValue();
+
+//        assertTrue("Not a ResArrayValue. Found: " + value.getClass(), value instanceof ResArrayValue);
+    }
+
+    @Test
     public void decodeArray() throws BrutException {
         ExtFile apkFile = new ExtFile(sTmpDir, "issue1994.apk");
         ApkInfo apkInfo = new ApkInfo(apkFile);

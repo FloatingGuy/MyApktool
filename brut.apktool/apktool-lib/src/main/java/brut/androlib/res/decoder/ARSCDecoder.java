@@ -291,7 +291,7 @@ public class ARSCDecoder {
         }
 
         HashMap<Integer, Integer> entryOffsetMap = new LinkedHashMap<>();
-        for (int i = 0; i < entryCount; i++) {
+        for (int i = 0; i < entryCount; i++) { //0xb57c5c - 0xb580ee
             if (isSparse) {
                 entryOffsetMap.put(mIn.readUnsignedShort(), mIn.readUnsignedShort());
             } else if (isOffset16) {
@@ -314,7 +314,7 @@ public class ARSCDecoder {
         int noEntry = isOffset16 ? NO_ENTRY_OFFSET16 : NO_ENTRY;
 
         // #3428 - In some applications the res entries are padded for alignment.
-        int entriesStartAligned = mHeader.startPosition + entriesStart;
+        int entriesStartAligned = mHeader.startPosition + entriesStart; // 0xb57c08 + 1256 = 0xb580f0
         if (mIn.position() < entriesStartAligned) {
             long bytesSkipped = mIn.skip(entriesStartAligned - mIn.position());
             LOGGER.fine(String.format("Skipping: %d byte(s) to align with ResTable_entry start.", bytesSkipped));
@@ -329,7 +329,7 @@ public class ARSCDecoder {
             }
 
             // As seen in some recent APKs - there are more entries reported than can fit in the chunk.
-            if (mIn.position() == mHeader.endPosition) {
+            if (mIn.position() == mHeader.endPosition) { //0xb585a8
                 int remainingEntries = entryCount - i;
                 LOGGER.warning(String.format("End of chunk hit. Skipping remaining entries (%d) in type: %s",
                     remainingEntries, mTypeSpec.getName()
@@ -337,7 +337,15 @@ public class ARSCDecoder {
                 break;
             }
 
-            EntryData entryData = readEntryData();
+            EntryData entryData = readEntryData(); // b580f0, b580f8, b58100
+            if (mIn.position() < 0xb585B0) {
+                LOGGER.warning("entryData offset: 0x" +Integer.toHexString(mIn.position()));
+            }
+
+            if (mIn.position() == 0xb585a8) {
+                LOGGER.warning("entryData offset: 0x" +Integer.toHexString(mIn.position()));
+            }
+
             if (entryData != null) {
                 readEntry(entryData);
             } else {
